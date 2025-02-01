@@ -1,0 +1,34 @@
+DROP TABLE orders;
+DROP TABLE users_role;
+DROP TABLE ratings;
+DROP TABLE not_verfied_users;
+DROP TABLE business;
+DROP TABLE clients_tickets;
+DROP TABLE workers_tickets;
+DROP TABLE rate_workers;
+DROP TABLE banded_users;
+DROP TABLE admins;
+DROP TABLE clients;
+DROP TABLE workers;
+
+SELECT * FROM not_verfied_users;
+SELECT * FROM clients;
+SELECT * FROM workers;
+SELECT * FROM admins;
+SELECT * FROM orders;
+SELECT * FROM clients_tickets;
+SELECT * FROM workers_tickets;
+SELECT * FROM rate_workers;
+
+// ===== owner =====
+insert into admins (id, admin_id, first_name, last_name, email, age, avatar, gender, state, role, password, created_at, updated_at) values ('0a092fb2-14fc-453a-8103-fd7ce77e6f26', '05bfe811-bec7-4cb6-8211-ce37deccefb9', 'Abdullah', 'Belal', 'abdullahbelal102938@gmail.com', 20, 'http://dummyimage.com/242x100.png/5fa2dd/ffffff', 'male', 'Luxor', 'owner', '$2b$10$8rB7YdY.L4cPbyRyAffJyuGDYeG4Zs0X6tQtY60MtulkRC3ixoO2i', '7/6/2024', '7/20/2024');
+insert into users_role (id, user_id, email,role, created_at, updated_at) values ('0a092fb2-14fc-453a-8103-fd7ce77e6f26', '05bfe811-bec7-4cb6-8211-ce37deccefb9', 'abdullahbelal102938@gmail.com', 'owner', now(), now());
+// ===== male worker =====
+insert into workers (id, worker_id, first_name, last_name, email, age, avatar, gender, state, role, password, created_at, updated_at) values ('0a092fb2-14fc-453a-8103-fd7ce77e6f33', '05bfe811-bec7-4cb6-8211-ce37deccefd1', 'Abdullah', 'Belal', 'abdullahbelal1029@gmail.com', 20, 'http://dummyimage.com/242x100.png/5fa2dd/ffffff', 'male', 'Luxor', 'worker', '$2b$10$8rB7YdY.L4cPbyRyAffJyuGDYeG4Zs0X6tQtY60MtulkRC3ixoO2i', '7/6/2024', '7/20/2024');
+insert into users_role (id, user_id, email,role, created_at, updated_at) values ('0a092fb2-14fc-453a-8103-fd7ce77e6f33', '05bfe811-bec7-4cb6-8211-ce37deccefd1', 'abdullahbelal1029@gmail.com', 'worker', now(), now());
+// ===== female worker =====
+insert into workers (id, worker_id, first_name, last_name, email, age, avatar, gender, state, role, password, created_at, updated_at) values ('0a092fb2-14fc-453a-8103-fd7ce77e6f32', '05bfe811-bec7-4cb6-8411-ce37deccefd1', 'Abdullah', 'Belal', 'workera@gmail.com', 20, 'http://dummyimage.com/242x100.png/5fa2dd/ffffff', 'female', 'Luxor', 'worker', '$2b$10$8rB7YdY.L4cPbyRyAffJyuGDYeG4Zs0X6tQtY60MtulkRC3ixoO2i', '7/6/2024', '7/20/2024');
+insert into users_role (id, user_id, email,role, created_at, updated_at) values ('0a092fb2-14fc-453a-8103-fd7ce77e6f32', '05bfe811-bec7-4cb6-8411-ce37deccefd1', 'workera@gmail.com', 'worker', now(), now());
+// ===== worker nor real email =====
+insert into workers (id, worker_id, first_name, last_name, email, age, avatar, gender, state, role, password, created_at, updated_at) values ('4cd8b741-e67f-44e6-8ae8-2aa7f4a559ae', '05bfe811-bec7-4cb6-8211-ce37deccefa4', 'Abdullah', 'Belal', 'worker@gmail.com', 20, 'http://dummyimage.com/242x100.png/5fa2dd/ffffff', 'male', 'Luxor', 'worker', '$2b$10$8rB7YdY.L4cPbyRyAffJyuGDYeG4Zs0X6tQtY60MtulkRC3ixoO2i', '7/6/2024', '7/20/2024');
+insert into users_role (id, user_id, email,role, created_at, updated_at) values ('4cd8b741-e67f-44e6-8ae8-2aa7f4a559ae', '05bfe811-bec7-4cb6-8211-ce37deccefa4', 'worker@gmail.com', 'worker', now(), now());
