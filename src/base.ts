@@ -1,1 +1,1 @@
-export const WebsiteBaseUrl = 'http://localhost:3000';
+export const WebsiteBaseUrl = 'https://nile-guides.vercel.app';
