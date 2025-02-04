@@ -38,7 +38,7 @@ import { join } from 'path';
         url: configService.get('DATABASE_URL'),
         migrations: [__dirname + '/migrations/*.{js,ts}'],
         autoLoadEntities: true,
-        synchronize: true,
+        synchronize: false,
       }),
       inject: [ConfigService],
     }),
