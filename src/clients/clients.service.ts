@@ -41,7 +41,6 @@ export class ClientsService {
     private readonly commonService: CommonService,
     private readonly workersService: WorkersService,
   ) {}
-  //* This file is fixed from (Exciptions)
   async register(registerDto: RegisterDto): Promise<DoneResponceInterface> {
     const user = await this.usersRoleRepo.findOne({
       where: { email: registerDto.email },
@@ -69,7 +68,7 @@ export class ClientsService {
       await sendMessage(
         registerDto.email,
         'Verification Code',
-        `<h4>This verification code is valid for only 10 minutes: <strong>${code}</strong></h4>`,
+        `This verification code is valid for only 10 minutes: <strong>${code}</strong>`,
       );
     } catch (error) {
       if (error.code === '23505') {
@@ -120,6 +119,11 @@ export class ClientsService {
       const userRole = this.usersRoleRepo.create(isNotVerfiedUser);
       await this.usersRoleRepo.save(userRole);
       await this.clientsRepo.save(user);
+      await sendMessage(
+        email,
+        `Congratulations`,
+        `Thank you for joining Nile Guides.`,
+      );
     } catch (error) {
       throw new InternalServerErrorException(InternalServerErrorMessage);
     }
@@ -162,7 +166,6 @@ export class ClientsService {
     try {
       await this.ordersRepo.save(orderReady);
     } catch (err) {
-      console.error(err);
       throw new InternalServerErrorException(InternalServerErrorMessage);
     }
     await sendMessage(
@@ -238,7 +241,6 @@ export class ClientsService {
     } catch (err) {
       throw new InternalServerErrorException(InternalServerErrorMessage);
     }
-    // await sendMessage() //! send message to worker said that the client paid us
     return {
       done: true,
       message: `You paid ${paid}.`,
@@ -272,7 +274,7 @@ export class ClientsService {
       .andWhere('client.email = :clientEmail', { clientEmail })
       .getOne();
     if (clientRate)
-      throw new BadRequestException(`You rated this business before.`);
+      throw new BadRequestException(`You rated this post before.`);
     const order = business.orders[business.orders.length - 1];
     const condition = this.checkDate(order.day);
     if (
@@ -290,6 +292,7 @@ export class ClientsService {
       business,
       client,
       rating: rateBusinessDto.rate,
+      text: rateBusinessDto.text,
     });
     try {
       await this.workersService.updateBusinessRate(businessId, {
@@ -303,6 +306,50 @@ export class ClientsService {
     return {
       done: true,
       message: `Your rate added successfully.`,
+    };
+  }
+  async getBusinessReviews(
+    businessId: string,
+    page: number = 1,
+    mostRated: boolean = false,
+  ): Promise<any> {
+    const query = this.ratingRepo
+      .createQueryBuilder('item')
+      .leftJoin('item.business', 'business')
+      .leftJoin('item.client', 'client')
+      .addSelect('client.first_name')
+      .addSelect('client.last_name')
+      .addSelect('client.avatar')
+      .addSelect('client.gender')
+      .where('business.id = :businessId', { businessId });
+    if (mostRated) {
+      query.orderBy('item.rating', 'DESC');
+    } else {
+      query.orderBy('item.created_at', 'DESC');
+    }
+    const [data, total] = await query
+      .skip((page - 1) * 20)
+      .take(20)
+      .getManyAndCount();
+    return {
+      data,
+      total,
+      page: +page,
+      lastPage: Math.ceil(total / 20),
+    };
+  }
+  async getRate(clientEmail: string, businessId: string) {
+    const rate = await this.ratingRepo.findOne({
+      where: {
+        client: { email: clientEmail },
+        business: { id: businessId },
+      },
+    });
+    if (!rate) throw new NotFoundException(`You didn't rate this post before.`);
+    return {
+      done: true,
+      rate: rate.rating,
+      text: rate.text,
     };
   }
   private generateVerificationCode(): string {

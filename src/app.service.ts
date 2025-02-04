@@ -2,16 +2,13 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
-  Res,
   UnauthorizedException,
 } from '@nestjs/common';
 import { LoginDto } from './clients/dto/login.dto';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { WorkersService } from './workers/workers.service';
-import { DashboardService } from './dashboard/dashboard.service';
 import { UpdateUserDto } from './clients/dto/update-user.dto';
 import sendMessage from './send-message';
 import { LangLevelEnum, StatesEnum } from './others/enums';
@@ -28,8 +25,7 @@ import { ClientsEntity } from './clients/entities/client.entity';
 import { AdminsEntity } from './dashboard/entities/admins.entity';
 import { WorkersEntity } from './workers/entities/worker.entity';
 import { Response } from 'express';
-import { join } from 'path';
-import { unlink } from 'fs/promises';
+import { ClientsService } from './clients/clients.service';
 
 @Injectable()
 export class AppService {
@@ -37,25 +33,9 @@ export class AppService {
     @InjectRepository(UsersRoleEntity)
     private readonly usersRoleRepo: Repository<UsersRoleEntity>,
     private readonly workersService: WorkersService,
-    private readonly dashboardService: DashboardService,
     private readonly commonService: CommonService,
+    private readonly clientsService: ClientsService,
   ) {}
-  //* This file is fixed from (Exciptions)
-  async deleteImage(filename: string, type: string): Promise<void> {
-    if (!['delete', 'temporary-delete'].includes(type)) {
-      throw new BadRequestException(
-        'Invalid type parameter. Allowed values are delete or temporary-delete.',
-      );
-    }
-    let filePath = join(__dirname, '..', 'uploads', filename);
-    if (type === 'temporary-delete')
-      filePath = join(__dirname, '..', 'temporary-uploads', filename);
-    try {
-      await unlink(filePath);
-    } catch (error) {
-      throw new BadRequestException('No image found with this info.');
-    }
-  }
   async login(
     { email, password }: LoginDto,
     response: Response,
@@ -138,7 +118,6 @@ export class AppService {
         `Your account is locked. Try again in an hour at least.`,
       );
     }
-    //*==========================================================================
     const access_token = this.generateAccessToken({
       email: user.email,
       role: user.role,
@@ -206,7 +185,7 @@ export class AppService {
     await sendMessage(
       email,
       'Confirmation code',
-      `<h4>This code is vaild for 10min => ${code}</h4>`,
+      `This code is vaild for 10min => ${code}`,
     );
     return {
       done: true,
@@ -376,6 +355,17 @@ export class AppService {
     );
     if (isClient) return isClient;
     return null;
+  }
+  async GetBusinessReviews(
+    businessId: string,
+    page: number = 1,
+    mostRated: boolean = false,
+  ) {
+    return await this.clientsService.getBusinessReviews(
+      businessId,
+      page,
+      mostRated,
+    );
   }
   private generateAccessToken(payload: any): string {
     return jwt.sign(payload, process.env.JWT_ACCESS_TOKEN_SECRET_KEY, {

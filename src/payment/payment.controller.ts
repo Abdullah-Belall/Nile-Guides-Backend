@@ -6,7 +6,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { PaymentService } from './payment.service';
-import { AuthGuard } from '@app/guards/auth.guard';
 import { ClientsGuard } from '@app/clients/guards/clients.guard';
 
 @Controller('payment')

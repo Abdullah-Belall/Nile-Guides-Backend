@@ -1,17 +1,13 @@
 import {
-  BadRequestException,
   Body,
   Controller,
-  Delete,
   Get,
-  InternalServerErrorException,
   Param,
   ParseUUIDPipe,
   Patch,
   Post,
   Query,
   Res,
-  UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -36,10 +32,6 @@ import { BusinessEntity } from './workers/entities/business.entity';
 import { ClientsEntity } from './clients/entities/client.entity';
 import { AdminsEntity } from './dashboard/entities/admins.entity';
 import { WorkersEntity } from './workers/entities/worker.entity';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { v4 as uuidv4 } from 'uuid';
-import { extname } from 'path';
 import { RefreshGuard } from './guards/refresh.guard';
 
 @Controller()
@@ -48,7 +40,6 @@ export class AppController {
     private readonly appService: AppService,
     private readonly workersService: WorkersService,
   ) {}
-  //* DONE
   @Post('login')
   async login(
     @Body() loginDto: LoginDto,
@@ -56,7 +47,6 @@ export class AppController {
   ): Promise<TokenInterface> {
     return await this.appService.login(loginDto, response);
   }
-  //* DONE
   @Post('logout')
   @UseGuards(AuthGuard)
   async logout(
@@ -65,13 +55,11 @@ export class AppController {
   ) {
     return await this.appService.logout(email, response);
   }
-  //* DONE
   @Get('new-access-token')
   @UseGuards(RefreshGuard)
   async newAccessToken(@User() { email }: any) {
     return await this.appService.newAccessToken(email);
   }
-  //* DONE
   @Post('forgot-password')
   async forgotPass(
     @Body() { email }: ForgotPassDto,
@@ -146,71 +134,12 @@ export class AppController {
   ): Promise<ClientsEntity | AdminsEntity | WorkersEntity> {
     return await this.appService.profile(email);
   }
-  @Post('pushImage/:type')
-  @UseGuards(AuthGuard)
-  @UseInterceptors(
-    FileInterceptor('image', {
-      storage: diskStorage({
-        destination: (req, file, callback) => {
-          const type = req.params.type;
-          let folder = './uploads';
-          if (type === 'temporary-save') {
-            folder = './temporary-uploads';
-          }
-          callback(null, folder);
-        },
-        filename: (_, file, callback) => {
-          const uniqueSuffix = `${uuidv4()}${extname(file.originalname)}`;
-          callback(null, uniqueSuffix);
-        },
-      }),
-      fileFilter: (_, file, callback) => {
-        if (!file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
-          return callback(
-            new BadRequestException('File type not supported'),
-            false,
-          );
-        }
-        callback(null, true);
-      },
-    }),
-  )
-  async uploadFile(
-    @Param('type') type: string,
-    @UploadedFile() file: Express.Multer.File,
+  @Get('reviews/:id')
+  async GetBusinessReviews(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Query('page') page: number,
+    @Query('mostRated') mostRated: boolean = false,
   ) {
-    if (!['save', 'temporary-save'].includes(type)) {
-      throw new BadRequestException(
-        'Invalid type parameter. Allowed values are save or temporary-save.',
-      );
-    }
-
-    if (!file) {
-      throw new BadRequestException(
-        'No file uploaded. Please provide an image.',
-      );
-    }
-
-    try {
-      return {
-        done: true,
-        message: 'Image uploaded successfully',
-        filename: file.filename,
-        folder: type === 'temporary-save' ? 'temporary-uploads' : 'uploads',
-      };
-    } catch (err) {
-      throw new InternalServerErrorException(
-        'An error occurred while uploading the image.',
-      );
-    }
-  }
-
-  @Delete('/image/:filename/:type')
-  async deleteImage(
-    @Param('filename') filename: string,
-    @Param('type') type: string,
-  ) {
-    await this.appService.deleteImage(filename, type);
-    return { done: true, message: 'Image deleted successfully.' };
+    return await this.appService.GetBusinessReviews(id, page, mostRated);
   }
 }

@@ -1,4 +1,4 @@
-import { IsIn, IsNotEmpty } from 'class-validator';
+import { IsIn } from 'class-validator';
 
 export class OrderChoiceDto {
   @IsIn(['done', 'cancelled'])

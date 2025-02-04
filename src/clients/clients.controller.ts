@@ -31,14 +31,12 @@ export class ClientsController {
     private readonly clientsService: ClientsService,
     private readonly commonService: CommonService,
   ) {}
-  //*DONE
   @Post('register')
   async register(
     @Body() registerDto: RegisterDto,
   ): Promise<DoneResponceInterface> {
     return await this.clientsService.register(registerDto);
   }
-  //*DONE
   @Post('verfiy-email')
   async verfiyEmail(
     @Body() verfiyEmailDto: VerfiyEmailDto,
@@ -108,7 +106,7 @@ export class ClientsController {
   @Get('orders')
   @UseGuards(ClientsGuard)
   async clientOrders(
-    @User() client: any, //! add code to check clients rights
+    @User() client: any,
     @Query('page') page?: number,
     @Query('created_at') created_at?: 'today' | 'week' | 'month',
     @Query('updated_at') updated_at?: 'today' | 'week' | 'month',
@@ -135,5 +133,13 @@ export class ClientsController {
       businessId,
       rateBusinessDto,
     );
+  }
+  @Get('rate/:id')
+  @UseGuards(ClientsGuard)
+  async getRate(
+    @User() client: any,
+    @Param('id', new ParseUUIDPipe()) businessId: string,
+  ) {
+    return await this.clientsService.getRate(client.email, businessId);
   }
 }

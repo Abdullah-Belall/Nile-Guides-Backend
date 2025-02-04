@@ -52,7 +52,6 @@ export class CommonService {
         throw new InternalServerErrorException(`Invalid action: ${action}`);
       }
     } catch (err) {
-      console.error(err);
       throw new InternalServerErrorException(
         `Problem with usersRepoHandle: ${action} action failed`,
       );
@@ -118,8 +117,8 @@ export class CommonService {
   ): Promise<SearchFilterInterface> {
     if (isNaN(page) || page < 1)
       throw new BadRequestException(`page cannot be => ${page}`);
-    const slicedName: any = TicketsRepo.slice(0, 7); //clients
-    const selectedRepo = this.getRepositoryByName(TicketsRepo); //this.clientsTicketsRepo
+    const slicedName: any = TicketsRepo.slice(0, 7);
+    const selectedRepo = this.getRepositoryByName(TicketsRepo);
     const user = await this.findUserByEmail(slicedName, email, false);
     if (!user)
       throw new BadRequestException(
@@ -134,7 +133,6 @@ export class CommonService {
     }
     tickets.orderBy('ticket.created_at', 'DESC');
     tickets.skip((page - 1) * 20).take(20);
-    console.log(status);
     const [selectedTickets, total] = await tickets.getManyAndCount();
     return {
       data: selectedTickets,
@@ -284,7 +282,6 @@ export class CommonService {
       throw new BadRequestException(
         `${created_at ? 'created_at' : 'updated_at'} filter must be 'today' | 'week' | 'month'`,
       );
-    //?=================================================
     const repo = this.ordersRepo
       .createQueryBuilder('order')
       .leftJoinAndSelect('order.business', 'business');

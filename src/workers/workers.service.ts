@@ -34,7 +34,6 @@ export class WorkersService {
     private readonly ordersRepo: Repository<OrdersEntity>,
     private readonly commonService: CommonService,
   ) {}
-  //* This file is fixed from (Exciptions)
   async ServiceInfo() {
     const data_ = await this.ordersRepo.findAndCount({
       where: {
@@ -118,7 +117,6 @@ export class WorkersService {
         `${created_at ? 'created_at' : 'update_at'} filter must be 'today' | 'week' | 'month'`,
       );
     }
-    //&===============================================
     const repo = this.businessRepo
       .createQueryBuilder('one')
       .leftJoin('one.worker', 'worker')
@@ -196,7 +194,6 @@ export class WorkersService {
         `<h3>${message}</h3>`,
       );
     } catch (err) {
-      console.error(err);
       throw new InternalServerErrorException(InternalServerErrorMessage);
     }
   }
@@ -227,7 +224,6 @@ export class WorkersService {
     try {
       await this.businessRepo.update(businessId, updateBusinessDto);
     } catch (err) {
-      console.error(err);
       throw new InternalServerErrorException(InternalServerErrorMessage);
     }
     return {
@@ -245,7 +241,6 @@ export class WorkersService {
     try {
       await this.businessRepo.update(businessId, { ...business, ...update });
     } catch (err) {
-      console.error(err);
       throw new InternalServerErrorException(InternalServerErrorMessage);
     }
     return {
@@ -295,7 +290,6 @@ export class WorkersService {
     try {
       await this.ordersRepo.update(orderId, order);
     } catch (err) {
-      console.error(err);
       throw new InternalServerErrorException(InternalServerErrorMessage);
     }
     await sendMessage(

@@ -1,4 +1,4 @@
-import { IsEnum, IsIn, IsNotEmpty, IsString } from 'class-validator';
+import { IsIn, IsNotEmpty, IsString } from 'class-validator';
 import { StatusEnum } from 'src/others/enums';
 
 export class ChangeBusinessStatusDto {

@@ -1,4 +1,11 @@
-import { IsNotEmpty, IsNumber, Max, Min } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 
 export class RateBusinessDto {
   @IsNumber()
@@ -6,4 +13,8 @@ export class RateBusinessDto {
   @Min(1)
   @Max(10)
   rate: number;
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  text: string;
 }

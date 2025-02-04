@@ -35,7 +35,6 @@ export class DashboardService {
     private readonly workersService: WorkersService,
     private readonly commonService: CommonService,
   ) {}
-  //* This file is fixed from (Exciptions)
   async getBusiness(id: string): Promise<BusinessEntity> {
     return await this.workersService.getBusiness(id, true, true);
   }

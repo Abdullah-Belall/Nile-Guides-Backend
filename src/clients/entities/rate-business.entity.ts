@@ -2,7 +2,6 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
   ManyToOne,
   Unique,
   BeforeInsert,
@@ -25,6 +24,8 @@ export class RatingEntity {
   business: BusinessEntity;
   @Column({ type: 'int', nullable: false })
   rating: number;
+  @Column({ nullable: true })
+  text: string;
   @Column()
   created_at: Date;
   @BeforeInsert()
