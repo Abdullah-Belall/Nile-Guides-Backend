@@ -65,17 +65,17 @@ export class ClientsService {
       } else {
         await this.notVerfiedUsersRepo.save(user);
       }
-      await sendMessage(
-        registerDto.email,
-        'Verification Code',
-        `This verification code is valid for only 10 minutes: <strong>${code}</strong>`,
-      );
     } catch (error) {
       if (error.code === '23505') {
         throw new ConflictException('This email is already registered.');
       }
       throw new InternalServerErrorException(InternalServerErrorMessage);
     }
+    await sendMessage(
+        registerDto.email,
+        'Verification Code',
+        `This verification code is valid for only 10 minutes: <strong>${code}</strong>`,
+      );
     return {
       done: true,
       message: 'Verification code sended to your email address.',
@@ -119,14 +119,14 @@ export class ClientsService {
       const userRole = this.usersRoleRepo.create(isNotVerfiedUser);
       await this.usersRoleRepo.save(userRole);
       await this.clientsRepo.save(user);
-      await sendMessage(
+    } catch (error) {
+      throw new InternalServerErrorException(InternalServerErrorMessage);
+    }
+    await sendMessage(
         email,
         `Congratulations`,
         `Thank you for joining Nile Guides.`,
       );
-    } catch (error) {
-      throw new InternalServerErrorException(InternalServerErrorMessage);
-    }
     return {
       done: true,
       message: `You can now login with your email address to your account.`,
