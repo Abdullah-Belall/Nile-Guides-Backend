@@ -188,14 +188,14 @@ export class WorkersService {
       if (changeTo === 'cancelled') obj.message = message;
       if (changeTo === 'done') obj.message = null;
       await this.businessRepo.update(businessId, obj);
+    } catch (err) {
+      throw new InternalServerErrorException(InternalServerErrorMessage);
+    }
       await sendMessage(
         business.worker.email,
         'Business',
         `<h3>${message}</h3>`,
       );
-    } catch (err) {
-      throw new InternalServerErrorException(InternalServerErrorMessage);
-    }
   }
   async workerUpdateBusiness(
     workerEmail: string,
