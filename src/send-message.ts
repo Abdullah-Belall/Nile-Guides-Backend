@@ -65,6 +65,6 @@ export default async function sendMessage(
       html: emailTemplate(html),
     });
   } catch {
-    throw new InternalServerErrorException('problem with send email');
+      console.error('Problem with send message')
   }
 }
