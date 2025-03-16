@@ -118,10 +118,6 @@ export class AppService {
         `Your account is locked. Try again in an hour at least.`,
       );
     }
-    const access_token = this.generateAccessToken({
-      email: user.email,
-      role: user.role,
-    });
     const refresh_token = this.generateRefreshToken({
       email: user.email,
       role: user.role,
